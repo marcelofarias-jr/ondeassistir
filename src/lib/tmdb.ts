@@ -293,3 +293,37 @@ export type {
   TrendingResult,
   WatchProvidersByType,
 };
+
+/**
+ * Retorna o Set de IDs de filmes atualmente em cartaz nos cinemas do Brasil.
+ * Busca até 3 páginas do endpoint /movie/now_playing para maior cobertura.
+ */
+export async function getNowPlayingIds(): Promise<Set<number>> {
+  if (USE_MOCK) return new Set();
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    const raw = await tmdbFetch<any>("/movie/now_playing", {
+      region: "BR",
+      page: "1",
+    });
+    const ids = new Set<number>(
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+      raw.results.map((r: any) => r.id as number),
+    );
+    const extraPages = Math.min(raw.total_pages, 3);
+    const extras = await Promise.all(
+      Array.from({ length: extraPages - 1 }, (_, i) =>
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        tmdbFetch<any>("/movie/now_playing", {
+          region: "BR",
+          page: String(i + 2),
+        }),
+      ),
+    );
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    extras.forEach((page) => page.results.forEach((r: any) => ids.add(r.id)));
+    return ids;
+  } catch {
+    return new Set();
+  }
+}

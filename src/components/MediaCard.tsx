@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Film } from "lucide-react";
 import type { MediaItem } from "@/lib/types";
 import { getImageUrl } from "@/lib/tmdb";
 import { formatYear } from "@/lib/utils";
@@ -38,6 +38,14 @@ export default function MediaCard({ item }: Props) {
           <Star size={9} fill="currentColor" />
           {item.voteAverage.toFixed(1)}
         </div>
+
+        {/* Em Cartaz badge */}
+        {item.inTheaters && (
+          <div className="absolute bottom-0 inset-x-0 flex items-center justify-center gap-1 bg-green-600/90 text-white text-[10px] font-bold uppercase tracking-wide py-1">
+            <Film size={10} />
+            Em Cartaz
+          </div>
+        )}
 
         {/* Hover overlay */}
         <div className="absolute inset-0 bg-[#e50914]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-200" />

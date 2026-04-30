@@ -1,8 +1,8 @@
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
-import { ArrowLeft, Star, Clock, Tv } from "lucide-react";
-import { getDetails, getImageUrl } from "@/lib/tmdb";
+import { ArrowLeft, Star, Clock, Tv, Film } from "lucide-react";
+import { getDetails, getImageUrl, getNowPlayingIds } from "@/lib/tmdb";
 import { getAggregatedProviders } from "@/lib/providers-aggregator";
 import { formatYear, formatRuntime, mediaTypeLabel } from "@/lib/utils";
 import type { MediaType } from "@/lib/types";
@@ -34,12 +34,17 @@ export default async function DetailPage({ params }: Props) {
   const mediaType = type as MediaType;
   const numId = parseInt(id, 10);
 
-  const [details, providers] = await Promise.all([
+  const [details, providers, nowPlayingIds] = await Promise.all([
     getDetails(mediaType, numId),
     getAggregatedProviders(mediaType, numId),
+    mediaType === "movie"
+      ? getNowPlayingIds()
+      : Promise.resolve(new Set<number>()),
   ]);
 
   if (!details) notFound();
+
+  const isInTheaters = mediaType === "movie" && nowPlayingIds.has(numId);
 
   const backdrop = getImageUrl(details.backdropPath, "original");
   const poster = getImageUrl(details.posterPath, "w500");
@@ -123,6 +128,13 @@ export default async function DetailPage({ params }: Props) {
             <h1 className="text-3xl sm:text-4xl font-black text-white mb-1">
               {details.title}
             </h1>
+
+            {isInTheaters && (
+              <div className="inline-flex items-center gap-2 bg-green-600/20 border border-green-500/40 text-green-400 rounded-full px-4 py-1.5 text-sm font-semibold mb-3">
+                <Film size={14} />
+                Em Cartaz nos Cinemas
+              </div>
+            )}
 
             {details.tagline && (
               <p className="text-zinc-500 italic mb-4">{details.tagline}</p>

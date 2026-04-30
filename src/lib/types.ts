@@ -17,6 +17,8 @@ export interface MediaItem {
   releaseDate: string;
   genreIds: number[];
   popularity: number;
+  /** Indica que o filme está atualmente em exibição nos cinemas */
+  inTheaters?: boolean;
 }
 
 export interface CastMember {
