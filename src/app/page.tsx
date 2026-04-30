@@ -2,6 +2,10 @@ import Hero from "@/components/Hero";
 import Carousel from "@/components/Carousel";
 import { getTrending, discoverMedia } from "@/lib/tmdb";
 
+// Renderizado no servidor a cada requisição — evita falha de build
+// se as variáveis de ambiente não estiverem disponíveis no momento da pré-renderização
+export const dynamic = "force-dynamic";
+
 export default async function Home() {
   const [movies, tv, docs] = await Promise.all([
     getTrending("movie"),

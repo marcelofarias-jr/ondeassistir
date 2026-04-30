@@ -22,7 +22,8 @@ import type {
 } from "./types";
 
 const USE_MOCK = process.env.USE_MOCK === "true";
-const TMDB_API_KEY = process.env.TMDB_API_KEY;
+// Remove aspas acidentais que podem ser coladas no painel do Vercel
+const TMDB_API_KEY = process.env.TMDB_API_KEY?.replace(/^["']|["']$/g, "");
 const TMDB_BASE = "https://api.themoviedb.org/3";
 
 export const TMDB_IMAGE_BASE = "https://image.tmdb.org/t/p";

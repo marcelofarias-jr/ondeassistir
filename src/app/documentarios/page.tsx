@@ -3,6 +3,8 @@ import MediaGrid from "@/components/MediaGrid";
 import Pagination from "@/components/Pagination";
 import { discoverMedia } from "@/lib/tmdb";
 
+export const dynamic = "force-dynamic";
+
 export const metadata: Metadata = {
   title: "Documentários — OndeAssistir",
   description: "Descubra onde assistir os melhores documentários no Brasil.",
