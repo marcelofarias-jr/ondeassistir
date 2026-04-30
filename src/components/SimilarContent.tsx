@@ -1,5 +1,29 @@
+// Componente para poster com fallback de erro
+function PosterWithFallback({ src, alt }: { src: string | null; alt: string }) {
+  const [imgError, setImgError] = useState(false);
+  if (src && !imgError) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        sizes="128px"
+        className="object-cover group-hover:scale-105 transition-transform duration-300"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+  return (
+    <div className="w-full h-full flex items-center justify-center text-zinc-600 text-xs text-center p-1 leading-tight">
+      Imagem
+      <br />
+      indisponível
+    </div>
+  );
+}
 import Link from "next/link";
 import Image from "next/image";
+import { useState } from "react";
 import type { MediaItem } from "@/lib/types";
 import { getImageUrl } from "@/lib/tmdb";
 import { Star } from "lucide-react";
@@ -28,17 +52,7 @@ export default function SimilarContent({ items, mediaType }: Props) {
             return (
               <Link key={item.id} href={href} className="w-32 shrink-0 group">
                 <div className="relative w-32 aspect-2/3 rounded-xl overflow-hidden bg-zinc-800 mb-2 border border-zinc-700">
-                  {poster ? (
-                    <Image
-                      src={poster}
-                      alt={item.title}
-                      fill
-                      sizes="128px"
-                      className="object-cover group-hover:scale-105 transition-transform duration-300"
-                    />
-                  ) : (
-                    <div className="w-full h-full bg-zinc-800" />
-                  )}
+                  <PosterWithFallback src={poster} alt={item.title} />
                   {item.voteAverage > 0 && (
                     <div className="absolute top-1.5 right-1.5 flex items-center gap-0.5 bg-black/70 rounded-full px-1.5 py-0.5">
                       <Star className="w-2.5 h-2.5 text-yellow-400 fill-yellow-400" />

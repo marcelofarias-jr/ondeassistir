@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
 import { Star, Play } from "lucide-react";
 import type { MediaItem } from "@/lib/types";
@@ -14,10 +15,12 @@ export default function Hero({ item }: Props) {
   const year = formatYear(item.releaseDate);
   const href = `/${item.mediaType}/${item.id}`;
 
+  const [imgError, setImgError] = useState(false);
+
   return (
     <section className="relative h-[80vh] min-h-130 flex items-end">
       {/* Backdrop image */}
-      {backdrop ? (
+      {backdrop && !imgError ? (
         <Image
           src={backdrop}
           alt={item.title}
@@ -25,9 +28,12 @@ export default function Hero({ item }: Props) {
           priority
           className="object-cover"
           sizes="100vw"
+          onError={() => setImgError(true)}
         />
       ) : (
-        <div className="absolute inset-0 bg-zinc-900" />
+        <div className="absolute inset-0 bg-zinc-900 flex items-center justify-center">
+          <span className="text-zinc-500 text-lg">Imagem indisponível</span>
+        </div>
       )}
 
       {/* Gradient overlays */}

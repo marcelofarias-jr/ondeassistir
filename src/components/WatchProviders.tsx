@@ -1,6 +1,7 @@
 import Image from "next/image";
 import type { WatchProvidersByType, WatchProvider } from "@/lib/types";
 import { getImageUrl } from "@/lib/tmdb";
+import { useState } from "react";
 
 interface Props {
   providers: WatchProvidersByType;
@@ -28,10 +29,11 @@ function QualityBadge({ quality }: { quality?: string }) {
 
 function ProviderLogo({ p }: { p: WatchProvider }) {
   const logoSrc = getImageUrl(p.logoPath, "w200");
+  const [imgError, setImgError] = useState(false);
   const inner = (
     <div className="flex flex-col items-center gap-1.5 w-16">
       <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700">
-        {logoSrc ? (
+        {logoSrc && !imgError ? (
           <Image
             src={logoSrc}
             alt={p.providerName}
@@ -42,6 +44,7 @@ function ProviderLogo({ p }: { p: WatchProvider }) {
               logoSrc.startsWith("https://media.") ||
               logoSrc.startsWith("https://cdn")
             }
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-zinc-600 text-[9px] text-center p-1 leading-tight">
@@ -75,17 +78,17 @@ function ProviderLogo({ p }: { p: WatchProvider }) {
 
 function RentBuyLogo({ p }: { p: WatchProvider }) {
   const logoSrc = getImageUrl(p.logoPath, "w200");
+  const [imgError, setImgError] = useState(false);
   const priceLabel =
     p.price !== undefined
       ? p.price === 0
         ? "Grátis"
         : `R$ ${p.price.toFixed(2)}`
       : null;
-
   const inner = (
     <div className="flex flex-col items-center gap-1 w-20">
       <div className="relative w-12 h-12 rounded-xl overflow-hidden bg-zinc-800 shrink-0 border border-zinc-700">
-        {logoSrc ? (
+        {logoSrc && !imgError ? (
           <Image
             src={logoSrc}
             alt={p.providerName}
@@ -96,6 +99,7 @@ function RentBuyLogo({ p }: { p: WatchProvider }) {
               logoSrc.startsWith("https://media.") ||
               logoSrc.startsWith("https://cdn")
             }
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="w-full h-full flex items-center justify-center text-zinc-600 text-[9px] text-center p-1 leading-tight">
@@ -108,9 +112,7 @@ function RentBuyLogo({ p }: { p: WatchProvider }) {
         {p.providerName}
       </span>
       {priceLabel && (
-        <span className="text-zinc-400 text-[10px] font-semibold">
-          {priceLabel}
-        </span>
+        <span className="text-[10px] text-zinc-400 mt-0.5">{priceLabel}</span>
       )}
     </div>
   );
@@ -123,6 +125,7 @@ function RentBuyLogo({ p }: { p: WatchProvider }) {
         title={
           priceLabel ? `${p.providerName} — ${priceLabel}` : p.providerName
         }
+        onError={() => setImgError(true)}
         className="hover:scale-105 transition-transform"
       >
         {inner}

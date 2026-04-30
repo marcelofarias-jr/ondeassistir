@@ -1,3 +1,31 @@
+// Componente para foto do elenco com fallback de erro
+function CastPhotoWithFallback({
+  src,
+  alt,
+}: {
+  src: string | null;
+  alt: string;
+}) {
+  const [imgError, setImgError] = useState(false);
+  if (src && !imgError) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        width={96}
+        height={96}
+        className="w-full h-full object-cover"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+  return (
+    <div className="w-full h-full flex items-center justify-center">
+      <User className="w-8 h-8 text-zinc-600" />
+    </div>
+  );
+}
+import { useState } from "react";
 import Image from "next/image";
 import type { CastMember } from "@/lib/types";
 import { getImageUrl } from "@/lib/tmdb";
@@ -22,19 +50,7 @@ export default function CastSection({ cast }: Props) {
             return (
               <div key={member.id} className="w-24 shrink-0">
                 <div className="w-24 h-24 rounded-xl overflow-hidden bg-zinc-800 mb-2 border border-zinc-700">
-                  {photo ? (
-                    <Image
-                      src={photo}
-                      alt={member.name}
-                      width={96}
-                      height={96}
-                      className="w-full h-full object-cover"
-                    />
-                  ) : (
-                    <div className="w-full h-full flex items-center justify-center">
-                      <User className="w-8 h-8 text-zinc-600" />
-                    </div>
-                  )}
+                  <CastPhotoWithFallback src={photo} alt={member.name} />
                 </div>
                 <p className="text-white text-xs font-semibold leading-snug line-clamp-2">
                   {member.name}

@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
 import { Star, Film } from "lucide-react";
 import type { MediaItem } from "@/lib/types";
@@ -12,6 +13,7 @@ interface Props {
 export default function MediaCard({ item }: Props) {
   const poster = getImageUrl(item.posterPath, "w300");
   const year = formatYear(item.releaseDate);
+  const [imgError, setImgError] = useState(false);
 
   return (
     <Link
@@ -19,13 +21,14 @@ export default function MediaCard({ item }: Props) {
       className="group shrink-0 w-37.5 sm:w-42.5 md:w-47.5 animate-slide-up"
     >
       <div className="relative aspect-2/3 rounded-lg overflow-hidden bg-zinc-900">
-        {poster ? (
+        {poster && !imgError ? (
           <Image
             src={poster}
             alt={item.title}
             fill
             className="object-cover transition-transform duration-300 group-hover:scale-105"
             sizes="(max-width: 640px) 150px, (max-width: 768px) 170px, 190px"
+            onError={() => setImgError(true)}
           />
         ) : (
           <div className="absolute inset-0 flex items-center justify-center bg-zinc-800 text-zinc-500 text-xs text-center p-2">

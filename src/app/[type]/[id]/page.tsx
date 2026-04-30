@@ -27,22 +27,49 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function DetailPage({ params }: Props) {
-  const { type, id } = await params;
+  let type, id;
+  try {
+    ({ type, id } = await params);
+  } catch {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-red-600 font-semibold">
+          Erro ao carregar parâmetros da URL.
+        </div>
+      </main>
+    );
+  }
 
   if (type !== "movie" && type !== "tv") notFound();
 
   const mediaType = type as MediaType;
   const numId = parseInt(id, 10);
 
-  const [details, providers, nowPlayingIds] = await Promise.all([
-    getDetails(mediaType, numId),
-    getAggregatedProviders(mediaType, numId),
-    mediaType === "movie"
-      ? getNowPlayingIds()
-      : Promise.resolve(new Set<number>()),
-  ]);
+  let details = null;
+  let providers = null;
+  let nowPlayingIds = new Set<number>();
+  let error = null;
+  try {
+    [details, providers, nowPlayingIds] = await Promise.all([
+      getDetails(mediaType, numId),
+      getAggregatedProviders(mediaType, numId),
+      mediaType === "movie"
+        ? getNowPlayingIds()
+        : Promise.resolve(new Set<number>()),
+    ]);
+  } catch {
+    error = "Erro ao carregar dados. Tente novamente mais tarde.";
+  }
 
-  if (!details) notFound();
+  if (!details) {
+    return (
+      <main className="min-h-screen flex items-center justify-center">
+        <div className="text-red-600 font-semibold">
+          {error || "Conteúdo não encontrado."}
+        </div>
+      </main>
+    );
+  }
 
   const isInTheaters = mediaType === "movie" && nowPlayingIds.has(numId);
 
@@ -52,6 +79,11 @@ export default async function DetailPage({ params }: Props) {
 
   return (
     <main className="min-h-screen pt-16">
+      {error && (
+        <div className="bg-red-600 text-white text-center py-4 font-semibold">
+          {error}
+        </div>
+      )}
       {/* Backdrop */}
       {backdrop && (
         <div className="relative h-[50vh] min-h-75">

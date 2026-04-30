@@ -1,8 +1,32 @@
 "use client";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
+// Componente para poster com fallback de erro
+function PosterWithFallback({ src, alt }: { src: string | null; alt: string }) {
+  const [imgError, setImgError] = useState(false);
+  if (src && !imgError) {
+    return (
+      <Image
+        src={src}
+        alt={alt}
+        fill
+        className="object-cover"
+        sizes="40px"
+        onError={() => setImgError(true)}
+      />
+    );
+  }
+  return (
+    <div className="absolute inset-0 flex items-center justify-center text-zinc-600 text-xs text-center p-1 leading-tight">
+      Imagem
+      <br />
+      indisponível
+    </div>
+  );
+}
 import { X, Search, Star, Film, Tv } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
+
 import { useSearch } from "@/hooks/useSearch";
 import { getImageUrl } from "@/lib/tmdb";
 import { formatYear } from "@/lib/utils";
@@ -97,23 +121,14 @@ export default function SearchModal({ onClose }: Props) {
                   >
                     {/* Poster */}
                     <div className="relative w-10 h-14 rounded overflow-hidden bg-zinc-800 shrink-0">
-                      {poster ? (
-                        <Image
-                          src={poster}
-                          alt={item.title}
-                          fill
-                          className="object-cover"
-                          sizes="40px"
-                        />
-                      ) : (
-                        <div className="absolute inset-0 flex items-center justify-center text-zinc-600">
-                          {item.mediaType === "movie" ? (
-                            <Film size={16} />
-                          ) : (
-                            <Tv size={16} />
-                          )}
-                        </div>
-                      )}
+                      <PosterWithFallback src={poster} alt={item.title} />
+                      <div className="absolute bottom-1 right-1">
+                        {item.mediaType === "movie" ? (
+                          <Film size={16} />
+                        ) : (
+                          <Tv size={16} />
+                        )}
+                      </div>
                     </div>
 
                     {/* Info */}
