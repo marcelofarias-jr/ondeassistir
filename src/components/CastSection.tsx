@@ -1,3 +1,4 @@
+"use client";
 // Componente para foto do elenco com fallback de erro
 function CastPhotoWithFallback({
   src,

@@ -1,3 +1,11 @@
+"use client";
+import Link from "next/link";
+import Image from "next/image";
+import { useState } from "react";
+import type { MediaItem } from "@/lib/types";
+import { getImageUrl } from "@/lib/tmdb";
+import { Star } from "lucide-react";
+
 // Componente para poster com fallback de erro
 function PosterWithFallback({ src, alt }: { src: string | null; alt: string }) {
   const [imgError, setImgError] = useState(false);
@@ -21,12 +29,6 @@ function PosterWithFallback({ src, alt }: { src: string | null; alt: string }) {
     </div>
   );
 }
-import Link from "next/link";
-import Image from "next/image";
-import { useState } from "react";
-import type { MediaItem } from "@/lib/types";
-import { getImageUrl } from "@/lib/tmdb";
-import { Star } from "lucide-react";
 
 interface Props {
   items: MediaItem[];

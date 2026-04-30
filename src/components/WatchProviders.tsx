@@ -1,3 +1,4 @@
+"use client";
 import Image from "next/image";
 import type { WatchProvidersByType, WatchProvider } from "@/lib/types";
 import { getImageUrl } from "@/lib/tmdb";
