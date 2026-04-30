@@ -30,7 +30,8 @@ export default async function DetailPage({ params }: Props) {
   let type, id;
   try {
     ({ type, id } = await params);
-  } catch {
+  } catch (e) {
+    console.error("[SSR][DetailPage] Erro ao carregar params:", e);
     return (
       <main className="min-h-screen flex items-center justify-center">
         <div className="text-red-600 font-semibold">
@@ -57,7 +58,8 @@ export default async function DetailPage({ params }: Props) {
         ? getNowPlayingIds()
         : Promise.resolve(new Set<number>()),
     ]);
-  } catch {
+  } catch (e) {
+    console.error("[SSR][DetailPage] Erro ao carregar dados:", e);
     error = "Erro ao carregar dados. Tente novamente mais tarde.";
   }
 

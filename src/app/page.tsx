@@ -19,7 +19,8 @@ export default async function Home() {
       discoverMedia("tv", 99),
       getNowPlayingIds(),
     ]);
-  } catch {
+  } catch (e) {
+    console.error("[SSR][Home] Erro ao carregar dados:", e);
     error = "Erro ao carregar dados. Tente novamente mais tarde.";
   }
 
