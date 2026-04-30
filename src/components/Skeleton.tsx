@@ -50,8 +50,8 @@ export function HeroSkeleton() {
       <div className="absolute bottom-16 left-8 md:left-16 flex flex-col gap-3">
         <Skeleton className="h-4 w-24" />
         <Skeleton className="h-10 w-64 md:w-96" />
-        <Skeleton className="h-4 w-80 md:w-[500px]" />
-        <Skeleton className="h-4 w-64 md:w-[400px]" />
+        <Skeleton className="h-4 w-80 md:w-125" />
+        <Skeleton className="h-4 w-64 md:w-100" />
         <div className="flex gap-3 mt-2">
           <Skeleton className="h-10 w-32 rounded-full" />
           <Skeleton className="h-10 w-32 rounded-full" />

@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import { Star, Play, Info } from "lucide-react";
+import { Star, Play } from "lucide-react";
 import type { MediaItem } from "@/lib/types";
 import { getImageUrl } from "@/lib/tmdb";
 import { formatYear, mediaTypeLabel } from "@/lib/utils";
@@ -62,13 +62,6 @@ export default function Hero({ item }: Props) {
           >
             <Play size={16} fill="currentColor" />
             Onde Assistir
-          </Link>
-          <Link
-            href={href}
-            className="flex items-center gap-2 bg-white/10 hover:bg-white/20 backdrop-blur-sm text-white font-semibold px-6 py-3 rounded-lg transition-colors text-sm border border-white/20"
-          >
-            <Info size={16} />
-            Mais Detalhes
           </Link>
         </div>
       </div>

@@ -15,6 +15,9 @@ export default function Carousel({ title, items, viewAllHref }: Props) {
   const scrollRef = useRef<HTMLDivElement>(null);
   const [canScrollLeft, setCanScrollLeft] = useState(false);
   const [canScrollRight, setCanScrollRight] = useState(true);
+  const [isDragging, setIsDragging] = useState(false);
+  const dragStart = useRef<{ x: number; scrollLeft: number } | null>(null);
+  const dragMoved = useRef(false);
 
   const updateScrollState = useCallback(() => {
     const el = scrollRef.current;
@@ -27,9 +30,39 @@ export default function Carousel({ title, items, viewAllHref }: Props) {
     const el = scrollRef.current;
     if (!el) return;
     el.scrollBy({
-      left: direction === "right" ? el.clientWidth * 0.75 : -(el.clientWidth * 0.75),
+      left:
+        direction === "right"
+          ? el.clientWidth * 0.75
+          : -(el.clientWidth * 0.75),
       behavior: "smooth",
     });
+  };
+
+  const onMouseDown = (e: React.MouseEvent<HTMLDivElement>) => {
+    const el = scrollRef.current;
+    if (!el) return;
+    dragMoved.current = false;
+    dragStart.current = { x: e.pageX, scrollLeft: el.scrollLeft };
+    setIsDragging(true);
+  };
+
+  const onMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
+    if (!dragStart.current) return;
+    const el = scrollRef.current;
+    if (!el) return;
+    const dx = e.pageX - dragStart.current.x;
+    if (Math.abs(dx) > 4) dragMoved.current = true;
+    el.scrollLeft = dragStart.current.scrollLeft - dx;
+  };
+
+  const onMouseUp = () => {
+    dragStart.current = null;
+    setIsDragging(false);
+  };
+
+  // Prevent click on child links when drag happened
+  const onClickCapture = (e: React.MouseEvent) => {
+    if (dragMoved.current) e.stopPropagation();
   };
 
   if (!items.length) return null;
@@ -56,10 +89,10 @@ export default function Carousel({ title, items, viewAllHref }: Props) {
           <button
             onClick={() => scroll("left")}
             aria-label="Rolar para a esquerda"
-            className="absolute left-0 top-1/2 -translate-y-8 z-10 h-full w-12 flex items-center justify-center bg-linear-to-r from-black to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+            className="absolute left-0 top-0 z-10 h-full w-14 flex items-center justify-center bg-linear-to-r from-black/70 to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
           >
-            <span className="bg-black/80 rounded-full p-1">
-              <ChevronLeft size={22} />
+            <span className="bg-black/70 rounded-full p-2 shadow-lg">
+              <ChevronLeft size={32} strokeWidth={2.5} />
             </span>
           </button>
         )}
@@ -68,7 +101,12 @@ export default function Carousel({ title, items, viewAllHref }: Props) {
         <div
           ref={scrollRef}
           onScroll={updateScrollState}
-          className="flex gap-3 overflow-x-auto px-4 md:px-8 pb-3"
+          onMouseDown={onMouseDown}
+          onMouseMove={onMouseMove}
+          onMouseUp={onMouseUp}
+          onMouseLeave={onMouseUp}
+          onClickCapture={onClickCapture}
+          className={`flex gap-3 overflow-x-auto px-4 md:px-8 pb-3 select-none ${isDragging ? "cursor-grabbing" : "cursor-grab"}`}
           style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
         >
           {items.map((item) => (
@@ -81,10 +119,10 @@ export default function Carousel({ title, items, viewAllHref }: Props) {
           <button
             onClick={() => scroll("right")}
             aria-label="Rolar para a direita"
-            className="absolute right-0 top-1/2 -translate-y-8 z-10 h-full w-12 flex items-center justify-center bg-linear-to-l from-black to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
+            className="absolute right-0 top-0 z-10 h-full w-14 flex items-center justify-center bg-linear-to-l from-black/70 to-transparent text-white opacity-0 group-hover/carousel:opacity-100 transition-opacity"
           >
-            <span className="bg-black/80 rounded-full p-1">
-              <ChevronRight size={22} />
+            <span className="bg-black/70 rounded-full p-2 shadow-lg">
+              <ChevronRight size={32} strokeWidth={2.5} />
             </span>
           </button>
         )}
