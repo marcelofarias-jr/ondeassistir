@@ -1,8 +1,8 @@
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import type { Metadata, Viewport } from "next";
 import { Poppins } from "next/font/google";
 import "./globals.css";
 import Header from "@/components/Header";
-import { SpeedInsights } from "@vercel/speed-insights/next";
 
 const poppins = Poppins({
   subsets: ["latin"],
